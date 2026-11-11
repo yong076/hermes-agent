@@ -131,7 +131,8 @@ class GatewayTurnPersistenceMixin:
         # the exchange in silence, and the visible fallback would be runtime text it answers (#137027).
         if not automatic_notices_allowed(_silence_source):
             _silence_reply_expected = False
-        if _intentional_silence and not self._silence_allowed_for_source(
+        # Webhook routes are autonomous events whose prompts may intentionally suppress an alert.
+        if _intentional_silence and _platform_name != "webhook" and not self._silence_allowed_for_source(
             _silence_source, _silence_kind, _silence_reply_expected, agent_result,
         ):
             logger.warning(
